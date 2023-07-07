@@ -99,7 +99,7 @@ def extract_website(string):
     driver.quit()
 
 def main():
-    extract_website("法國自由行景點")# Enter your desired search query
+    extract_website("france touris spots")# Enter your desired search query
     
 if __name__=='__main__':
     main()
