@@ -61,11 +61,18 @@ def extract_website(string):
         # extract the content of the website
         driver.get(url)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
+        print("title: ",title)
+        print("h1: ",soup.find("h1").get_text())
+        print("h2: ",soup.find("h2").get_text())
+        print("h3: ",soup.find("h3").get_text())
+        
         content_arr = soup.find_all("h3")
         
         for content in content_arr:
             if content.get_text() != "":
                 each.append(content.get_text())
+            else: 
+                break
                 
         # append results to the array
         results_data.append(each)
