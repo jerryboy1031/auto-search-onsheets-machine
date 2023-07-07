@@ -18,15 +18,15 @@ from google.oauth2.service_account import Credentials
 # save the search result to google sheets by spreadsheet api
 def saveToSheet(data):
     scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.file']
-    credentials= Credentials.from_service_account_file("/data2sheet-1/secret_credential.json", scopes=scope)
-    print("Hi1")
+    
+    credentials= Credentials.from_service_account_file("secret_credential.json", scopes=scope)
     client = gspread.authorize(credentials)
     sh = client.open(title='EU_tour')#,folder_id='1CCJ6d-P381whToCFP6V9rb_mkI84GuHIF6z5rqWAzzg') #error--------------
     wks= sh.worksheet("法國")
     for [title, url, snippet] in data:
         wks.insert_row([title, url],index=7)
     #print(wks.get_values())
-    print("Hi2")
+    
 #----------------------------------------------------------------------    
 # search by google search engine(Chrome) and extract the search result 
 def extract_website(string):
@@ -49,7 +49,7 @@ def extract_website(string):
 
     # Extract data from search results
     results_data = [] # [ [title, url, snippet],...]
-    for result in search_results[:10]:
+    for result in search_results[:100]:
         title = result.find("h3").get_text()
         url = result.find("a")["href"]
         snippet_element = result.find("span", class_="aCOpRe")
@@ -67,5 +67,5 @@ def extract_website(string):
 def main():
     extract_website("法國自由行景點")# Enter your desired search query
     
-if __name__=='main':
+if __name__=='__main__':
     main()
