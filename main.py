@@ -40,17 +40,20 @@ def extract_website(string):
     # Define search query
     search_query = string  
 
-    # Perform search and extract data
-    driver.get(f"https://www.google.com/search?q={search_query}")
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    # extend the pages (or the search results will only the first page)
+    search_results = []
+    for page in range(1, 3):  # Scrape results from the first 3 pages (change as needed)
+        url = f"https://www.google.com/search?q={search_query}&start={page * 10}"
+        driver.get(url)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        # Find search result elements
+        search_results.extend(soup.find_all("div", class_="yuRUbf"))
 
-    # Find search result elements
-    search_results = soup.find_all("div", class_="yuRUbf")
 
     # Extract data from search results
-    each=[] # every search each[title, url, spot1,spot2...]
     results_data = [] # [ each[],...]
     for result in search_results[:20]:
+        each=[] # every search each[title, url, spot1,spot2...]
         title = result.find("h3").get_text()
         url = result.find("a")["href"]
         #snippet_element = result.find("span", class_="aCOpRe")
@@ -58,28 +61,40 @@ def extract_website(string):
         
         each.append(title)
         each.append(url)
-        # extract the content of the website
+        
+        # append results to the array
+        results_data.append(each)
+         
+        '''# extract the content of the website
         driver.get(url)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
+       
+        #HTML tags
         print("title: ",title)
         print("h1: ",soup.find("h1").get_text())
         print("h2: ",soup.find("h2").get_text())
         print("h3: ",soup.find("h3").get_text())
-        
+        print("h4: ",soup.find("h4").get_text())
+        #print("h5: ",soup.find("h5").get_text())
+        #print("h6: ",soup.find("h6").get_text())
+        #print("body: ",soup.find("body").get_text())
+        print("p: ",soup.find("p").get_text())
+        #print("ul: ",soup.find("ul").get_text())
+        print("table: ",soup.find("table").get_text())
+  
         content_arr = soup.find_all("h3")
         
         for content in content_arr:
             if content.get_text() != "":
                 each.append(content.get_text())
             else: 
-                break
-                
-        # append results to the array
-        results_data.append(each)
+                break'''  
+             
+        
         
     #save data to sheets
     saveToSheet(results_data)
-    
+
     # Close the browser
     driver.quit()
 
