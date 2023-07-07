@@ -23,8 +23,8 @@ def saveToSheet(data):
     client = gspread.authorize(credentials)
     sh = client.open(title='EU_tour')#,folder_id='1CCJ6d-P381whToCFP6V9rb_mkI84GuHIF6z5rqWAzzg') #error--------------
     wks= sh.worksheet("法國")
-    for [title, url, snippet] in data:
-        wks.insert_row([title, url],index=7)
+    for each in data:
+        wks.insert_row(each,index=7)
     #print(wks.get_values())
     
 #----------------------------------------------------------------------    
@@ -48,16 +48,28 @@ def extract_website(string):
     search_results = soup.find_all("div", class_="yuRUbf")
 
     # Extract data from search results
-    results_data = [] # [ [title, url, snippet],...]
-    for result in search_results[:100]:
+    each=[] # every search each[title, url, spot1,spot2...]
+    results_data = [] # [ each[],...]
+    for result in search_results[:20]:
         title = result.find("h3").get_text()
         url = result.find("a")["href"]
-        snippet_element = result.find("span", class_="aCOpRe")
-        snippet = snippet_element.get_text() if snippet_element else ""
+        #snippet_element = result.find("span", class_="aCOpRe")
+        #snippet = snippet_element.get_text() if snippet_element else ""
         
-        results_data.append([title, url, snippet])
+        each.append(title)
+        each.append(url)
+        # extract the content of the website
+        driver.get(url)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        content_arr = soup.find_all("h3")
         
-    print(results_data)
+        for content in content_arr:
+            if content.get_text() != "":
+                each.append(content.get_text())
+                
+        # append results to the array
+        results_data.append(each)
+        
     #save data to sheets
     saveToSheet(results_data)
     
