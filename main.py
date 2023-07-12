@@ -9,7 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
-
+import time 
 # google sheet
 import gspread
 from google.oauth2.service_account import Credentials
@@ -48,23 +48,26 @@ def extract_website(string):
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         # Find search result elements
         search_results.extend(soup.find_all("div", class_="yuRUbf"))
+        time.sleep(5)
 
 
     # Extract data from search results
     results_data = [] # [ each[],...]
+    print(search_results[0])
     for result in search_results[:20]:
         each=[] # every search each[title, url, spot1,spot2...]
         title = result.find("h3").get_text()
         url = result.find("a")["href"]
         #snippet_element = result.find("span", class_="aCOpRe")
         #snippet = snippet_element.get_text() if snippet_element else ""
-        
+        print("\n title: ",title)
+        print("\n url: ",url)
         each.append(title)
         each.append(url)
         
         # append results to the array
         results_data.append(each)
-         
+        
         '''# extract the content of the website
         driver.get(url)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -93,7 +96,7 @@ def extract_website(string):
         
         
     #save data to sheets
-    saveToSheet(results_data)
+    #saveToSheet(results_data)
 
     # Close the browser
     driver.quit()
